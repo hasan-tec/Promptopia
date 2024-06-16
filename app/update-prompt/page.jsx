@@ -1,40 +1,18 @@
-"use client";
+// UpdatePrompt.js
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router"; // Importing from next/router instead of next/navigation
+import { useRouter } from "next/router"; // Import from next/router for client-side routing
 
 import Form from "@components/Form";
 
 const UpdatePrompt = () => {
   const router = useRouter();
-  const [promptId, setPromptId] = useState(null); // State to hold promptId
+  const [promptId, setPromptId] = useState(null);
   const [post, setPost] = useState({ prompt: "", tag: "" });
   const [submitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // Function to get prompt details
-    const getPromptDetails = async () => {
-      try {
-        const response = await fetch(`/api/prompt/${promptId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setPost({
-            prompt: data.prompt,
-            tag: data.tag,
-          });
-        } else {
-          throw new Error("Failed to fetch prompt details");
-        }
-      } catch (error) {
-        console.error("Error fetching prompt details:", error);
-      }
-    };
-
-    if (promptId) getPromptDetails();
-  }, [promptId]);
-
-  useEffect(() => {
-    // Fetch promptId from query params
+    // Fetch promptId from query params on client-side
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
     if (id) {
@@ -43,6 +21,30 @@ const UpdatePrompt = () => {
       console.warn("Missing id parameter in query");
     }
   }, []);
+
+  useEffect(() => {
+    // Fetch prompt details when promptId changes and only on client-side
+    if (promptId) {
+      const getPromptDetails = async () => {
+        try {
+          const response = await fetch(`/api/prompt/${promptId}`);
+          if (response.ok) {
+            const data = await response.json();
+            setPost({
+              prompt: data.prompt,
+              tag: data.tag,
+            });
+          } else {
+            throw new Error("Failed to fetch prompt details");
+          }
+        } catch (error) {
+          console.error("Error fetching prompt details:", error);
+        }
+      };
+
+      getPromptDetails();
+    }
+  }, [promptId]); // Dependency array ensures this effect runs when promptId changes
 
   const updatePrompt = async (e) => {
     e.preventDefault();
