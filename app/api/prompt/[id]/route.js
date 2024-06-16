@@ -1,8 +1,6 @@
 import Prompt from "@models/prompt";
 import { connectToDB } from "@utils/database";
 
-// GET
-
 export const GET = async (request, { params }) => {
     try {
         await connectToDB()
@@ -17,8 +15,6 @@ export const GET = async (request, { params }) => {
     }
 }
 
-
-// PATCH(UPDATE)
 export const PATCH = async (request, { params }) => {
     const { prompt, tag } = await request.json();
 
@@ -43,8 +39,6 @@ export const PATCH = async (request, { params }) => {
         return new Response("Error Updating Prompt", { status: 500 });
     }
 };
-
-// DELETE 
 
 export const DELETE = async (request, { params }) => {
     try {

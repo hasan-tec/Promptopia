@@ -13,8 +13,7 @@ const handler = NextAuth({
   ],
   callbacks: {
     async session({ session }) {
-      console.log('Session callback called with session:', session);
-      await connectToDB();
+      // store the user id from MongoDB to session
       const sessionUser = await User.findOne({ email: session.user.email });
       session.user.id = sessionUser._id.toString();
 
@@ -22,7 +21,6 @@ const handler = NextAuth({
     },
     async signIn({ account, profile, user, credentials }) {
       try {
-        console.log('Sign-in callback called with profile:', profile);
         await connectToDB();
 
         // check if user already exists
@@ -37,13 +35,13 @@ const handler = NextAuth({
           });
         }
 
-        return true;
+        return true
       } catch (error) {
-        console.error("Error checking if user exists:", error.message);
-        return false;
+        console.log("Error checking if user exists: ", error.message);
+        return false
       }
     },
   }
-});
+})
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }
