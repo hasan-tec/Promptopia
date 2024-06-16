@@ -1,8 +1,11 @@
-// update-prompt.jsx
+// pages/update-prompt.jsx
+
+// Use the 'use client' pragma to indicate this is a client-side component
+'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { useSearchParams } from 'next/dist/client/router';
+import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation
+import { useSearchParams } from 'next/navigation'; // Import useSearchParams from next/navigation
 
 import Form from '@components/Form';
 
