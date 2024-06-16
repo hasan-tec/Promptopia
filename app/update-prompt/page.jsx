@@ -1,55 +1,41 @@
-// pages/update-prompt.jsx
+"use client";
 
-// Use the 'use client' pragma to indicate this is a client-side component
-'use client';
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation
-import { useSearchParams } from 'next/navigation'; // Import useSearchParams from next/navigation
-
-import Form from '@components/Form';
+import Form from "@components/Form";
 
 const UpdatePrompt = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const promptId = searchParams.get('id');
+  const promptId = searchParams.get("id");
 
-  const [post, setPost] = useState({ prompt: '', tag: '' });
+  const [post, setPost] = useState({ prompt: "", tag: "", });
   const [submitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const getPromptDetails = async () => {
-      if (!promptId) return; // Exit early if promptId is falsy
+      const response = await fetch(`/api/prompt/${promptId}`);
+      const data = await response.json();
 
-      try {
-        const response = await fetch(`/api/prompt/${promptId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch prompt details');
-        }
-        const data = await response.json();
-
-        setPost({
-          prompt: data.prompt,
-          tag: data.tag,
-        });
-      } catch (error) {
-        console.error('Error fetching prompt details:', error);
-      }
+      setPost({
+        prompt: data.prompt,
+        tag: data.tag,
+      });
     };
 
-    getPromptDetails();
+    if (promptId) getPromptDetails();
   }, [promptId]);
 
   const updatePrompt = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    if (!promptId) return alert("Missing PromptId!");
+
     try {
       const response = await fetch(`/api/prompt/${promptId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: "PATCH",
         body: JSON.stringify({
           prompt: post.prompt,
           tag: post.tag,
@@ -57,25 +43,25 @@ const UpdatePrompt = () => {
       });
 
       if (response.ok) {
-        router.push('/');
-      } else {
-        throw new Error('Failed to update prompt');
+        router.push("/");
       }
     } catch (error) {
-      console.error('Error updating prompt:', error);
+      console.log(error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
+    <Suspense>
     <Form
-      type="Edit"
+      type='Edit'
       post={post}
       setPost={setPost}
       submitting={submitting}
       handleSubmit={updatePrompt}
     />
+    </Suspense>
   );
 };
 
