@@ -1,4 +1,5 @@
 // UpdatePrompt.js
+"use client"
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router"; // Import from next/router for client-side routing
